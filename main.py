@@ -13,12 +13,17 @@ group_id = input("请输入 group_id: ")  # 课程的总ID，在链接的mycours
 url = f"{endpoint}resource/queryCourseResources?group_id={group_id}"  # 获取课程资源
 course_jobs = requests.get(url=url, headers=headers).json()["data"]
 
+red_font = "\033[31m"
+green_font = "\033[32m"
+orange_font = "\033[33m"
+reset_font = "\033[0m"
+
 for job in course_jobs:  # 遍历课程任务
     node_id = job["id"]  # 任务ID，在链接的最尾部
     job_type = job["type"]  # 任务类型
 
     if "task_id" not in job:
-        print(f"{node_id}: Not a task, skipped.")
+        print(f"{orange_font}{node_id}{reset_font}: Not a task, skipped.")
         continue
 
     if job_type == 9:  # 9=视频
@@ -52,7 +57,7 @@ for job in course_jobs:  # 遍历课程任务
         }
 
         result = requests.post(url=url, headers=headers, json=data).json()
-        print(f"{node_id}: {result}")
+        print(f"{green_font}{node_id}{reset_font}: {result}")
 
     elif job_type == 6:  # 6=文档
         task_id = job["task_id"]
@@ -64,7 +69,8 @@ for job in course_jobs:  # 遍历课程任务
             "node_id": node_id
         }
         result = requests.post(url=url, headers=headers, json=data).json()
-        print(f"{node_id}: {result}")
+        print(f"{green_font}{node_id}{reset_font}: {result}")
 
     else:
-        print(f"{node_id}: job_type={job_type} Not Implemented, skipped.")
+        print(
+            f"{red_font}{node_id}{reset_font}: job_type={job_type} Not Implemented, skipped.")
